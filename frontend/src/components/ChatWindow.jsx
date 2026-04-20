@@ -3,7 +3,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Smile, Paperclip, Phone, Video, Search, MoreVertical, Check, Info, Bell, Shield, Ban, ChevronRight, MessageSquare, ImageIcon } from 'lucide-react';
+import { Send, Smile, Paperclip, Phone, Video, Search, MoreVertical, Check, Info, Bell, Shield, Ban, ChevronRight, MessageSquare, ImageIcon, X, Trash2 } from 'lucide-react';
 
 const socket = io('http://localhost:5000');
 
@@ -15,8 +15,13 @@ const ChatWindow = ({ friend }) => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
+  
   const fileInputRef = useRef();
   const scrollRef = useRef();
+  const menuRef = useRef();
 
   useEffect(() => {
     if (friend) {
@@ -45,6 +50,17 @@ const ChatWindow = ({ friend }) => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const setupChat = async () => {
     setLoading(true);
@@ -133,25 +149,101 @@ const ChatWindow = ({ friend }) => {
     setUploading(false);
   };
 
+  const clearChat = () => {
+    if (window.confirm('Are you sure you want to clear this chat?')) {
+        setMessages([]);
+        setShowMenu(false);
+        // Note: Full backend implementation would delete messages from DB
+    }
+  };
+
+  const filteredMessages = messages.filter(msg => 
+    msg.message_text.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex h-full bg-[#020617] relative overflow-hidden">
       {/* Main Chat Column */}
       <div className="flex-1 flex flex-col h-full border-r border-white/5 relative">
-        {/* Pulse WhatsApp Header */}
+        {/* Pulse Hybrid Header */}
         <div className="h-20 px-6 flex items-center justify-between bg-[#020617]/40 backdrop-blur-md z-30 border-b border-white/5">
-            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setShowInfo(!showInfo)}>
-                <div className="relative">
-                    <img src={friend.profile_image} className="w-11 h-11 rounded-[16px] object-cover border-2 border-white/5 group-hover:border-pulse-violet/50 transition-all" alt="" />
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#020617]" />
+            <AnimatePresence>
+                {!showSearch ? (
+                    <motion.div 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="flex items-center gap-4 cursor-pointer"
+                    >
+                        <div className="relative">
+                            <img src={friend.profile_image} className="w-11 h-11 rounded-[16px] object-cover border-2 border-white/5" alt="" />
+                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#020617]" />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-white tracking-tight">{friend.name}</h3>
+                            <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] italic">Active Now</p>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div 
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: '100%' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="flex-1 flex items-center bg-white/5 rounded-2xl px-4 py-2 mr-4"
+                    >
+                        <Search size={16} className="text-pulse-violet mr-3" />
+                        <input 
+                            type="text"
+                            autoFocus
+                            placeholder="Search messages..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="bg-transparent border-none outline-none text-white text-xs font-bold uppercase tracking-widest w-full"
+                        />
+                        <button onClick={() => { setShowSearch(false); setSearchQuery(''); }}>
+                            <X size={16} className="text-gray-500 hover:text-white" />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="flex items-center gap-4 relative">
+                <button 
+                    onClick={() => setShowSearch(!showSearch)}
+                    className={`p-3 rounded-2xl transition-all ${showSearch ? 'bg-pulse-violet/10 text-pulse-violet' : 'text-gray-600 hover:text-white'}`}
+                >
+                    <Search size={20} />
+                </button>
+                
+                <div className="relative" ref={menuRef}>
+                    <button 
+                        onClick={() => setShowMenu(!showMenu)}
+                        className={`p-3 rounded-2xl transition-all ${showMenu ? 'bg-white/10 text-white' : 'text-gray-600 hover:text-white'}`}
+                    >
+                        <MoreVertical size={20} />
+                    </button>
+                    
+                    <AnimatePresence>
+                        {showMenu && (
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                                className="absolute right-0 mt-2 w-48 bg-[#0B1120] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 p-1"
+                            >
+                                <button className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all rounded-xl">
+                                    <Info size={16} /> Contact Info
+                                </button>
+                                <button 
+                                    onClick={clearChat}
+                                    className="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-500/10 transition-all rounded-xl"
+                                >
+                                    <Trash2 size={16} /> Clear Chat
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
-                <div>
-                    <h3 className="text-sm font-bold text-white group-hover:text-pulse-violet transition-colors">{friend.name}</h3>
-                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] italic">Active Now</p>
-                </div>
-            </div>
-            <div className="flex items-center gap-4">
-                <Search size={20} className="text-gray-600 cursor-pointer hover:text-pulse-violet transition-colors" />
-                <MoreVertical size={20} className="text-gray-600 cursor-pointer hover:text-pulse-violet transition-colors" />
             </div>
         </div>
 
@@ -165,11 +257,15 @@ const ChatWindow = ({ friend }) => {
                 </div>
             ) : (
                 <div className="flex flex-col space-y-6 relative z-10">
-                    <div className="flex justify-center mb-4">
-                        <span className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-700 bg-white/5 px-6 py-2 rounded-full border border-white/5">Session Securely Established</span>
-                    </div>
+                    {searchQuery && (
+                        <div className="text-center mb-4">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-pulse-violet bg-pulse-violet/10 px-4 py-2 rounded-lg">
+                                {filteredMessages.length} results found for "{searchQuery}"
+                            </span>
+                        </div>
+                    )}
 
-                    {messages.map((msg, index) => {
+                    {(searchQuery ? filteredMessages : messages).map((msg, index) => {
                         const isMe = msg.sender_id._id === user._id || msg.sender_id === user._id;
                         return (
                             <motion.div 
@@ -180,20 +276,17 @@ const ChatWindow = ({ friend }) => {
                             >
                                 <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[70%]`}>
                                     <div className={`${isMe ? 'chat-bubble-sender' : 'chat-bubble-receiver'} relative drop-shadow-2xl overflow-hidden`}>
-                                        {isMe && <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />}
-                                        {msg.message_text && <p className="text-sm font-medium leading-relaxed tracking-wide">{msg.message_text}</p>}
-                                        {msg.image_url && (
-                                            <div className="relative group/img mt-1">
-                                                <img src={msg.image_url} className="w-full rounded-2xl border border-white/10 shadow-2xl" alt="" />
-                                                <div className="absolute inset-0 bg-pulse-indigo/10 opacity-0 group-hover/img:opacity-100 transition-opacity rounded-2xl" />
-                                            </div>
+                                        {msg.message_text && (
+                                            <p className="text-sm font-medium leading-relaxed tracking-wide">
+                                                {msg.message_text}
+                                            </p>
                                         )}
+                                        {msg.image_url && <img src={msg.image_url} className="w-full rounded-2xl border border-white/10 shadow-2xl mt-1" alt="" />}
                                     </div>
                                     <div className="flex items-center gap-2 mt-2 px-1">
                                         <span className="text-[9px] text-gray-700 font-black uppercase tracking-widest">
                                             {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                                         </span>
-                                        {isMe && <Check size={12} className="text-pulse-violet opacity-60" />}
                                     </div>
                                 </div>
                             </motion.div>
@@ -206,106 +299,29 @@ const ChatWindow = ({ friend }) => {
 
         {/* Input Sanctuary */}
         <div className="p-8 pt-4">
-            <div className="bg-[#0B1120]/60 p-2.5 rounded-[2.5rem] border border-white/5 shadow-2xl flex items-center gap-3 backdrop-blur-xl group focus-within:border-pulse-violet/30 transition-all">
+            <div className="bg-[#0B1120]/60 p-2.5 rounded-[2.5rem] border border-white/5 shadow-2xl flex items-center gap-3 backdrop-blur-xl transition-all">
                 <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
-                <div className="flex items-center gap-2">
-                    <button onClick={() => fileInputRef.current.click()} className="p-4 bg-[#020617] rounded-3xl text-gray-500 hover:text-white hover:bg-pulse-indigo/20 transition-all">
-                        <Paperclip size={20} className="-rotate-45" />
-                    </button>
-                    <button className="p-4 bg-[#020617] rounded-3xl text-gray-500 hover:text-white hover:bg-pulse-indigo/20 transition-all">
-                        <Smile size={20} />
-                    </button>
-                </div>
-                
+                <button onClick={() => fileInputRef.current.click()} className="p-4 bg-[#020617] rounded-3xl text-gray-500 hover:text-white transition-all">
+                    <Paperclip size={20} className="-rotate-45" />
+                </button>
                 <form onSubmit={handleSendMessage} className="flex-1 flex items-center gap-3">
                     <input 
                         type="text" 
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Transmit Pulse Data..."
-                        className="flex-1 bg-transparent border-none outline-none text-white text-sm font-medium px-2 py-4 placeholder-[#1e293b] uppercase tracking-widest text-[11px]"
+                        placeholder="Type a message..."
+                        className="flex-1 bg-transparent border-none outline-none text-white text-[11px] font-bold uppercase tracking-widest px-2 py-4"
                     />
                     <button 
                         type="submit"
-                        className="p-5 bg-gradient-to-br from-pulse-indigo to-pulse-violet text-white rounded-[2rem] shadow-2xl shadow-pulse-violet/20 transition-all active:scale-90 flex items-center justify-center group/send"
+                        className="p-5 bg-gradient-to-br from-pulse-indigo to-pulse-violet text-white rounded-[2rem] shadow-2xl transition-all active:scale-90"
                     >
-                        <Send size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        <Send size={22} />
                     </button>
                 </form>
             </div>
         </div>
       </div>
-
-      {/* Right Column: Friend Insight (PULSE Info Sidebar) */}
-      <AnimatePresence>
-        {showInfo && (
-            <motion.div 
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 360, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                className="h-full bg-[#020617] flex flex-col border-white/5 overflow-hidden border-l"
-            >
-                <div className="flex flex-col h-full overflow-y-auto custom-scrollbar p-10">
-                    <div className="flex flex-col items-center text-center mb-10">
-                        <div className="relative mb-8">
-                            <div className="absolute inset-0 bg-pulse-violet/20 blur-[40px] animate-pulse" />
-                            <img 
-                              src={friend.profile_image} 
-                              className="w-36 h-36 rounded-[3rem] object-cover border-4 border-white/5 shadow-2xl relative z-10" 
-                              alt="" 
-                            />
-                        </div>
-                        <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{friend.name}</h3>
-                        <div className="px-4 py-1.5 bg-pulse-violet/10 rounded-full border border-pulse-violet/20">
-                            <p className="text-[10px] text-pulse-violet font-black uppercase tracking-[0.2em]">Validated Resident</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-10">
-                        <div>
-                            <h4 className="text-[10px] text-gray-700 font-black uppercase tracking-[0.3em] mb-6">Shared Sanctuary Media</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                                {['https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=200', 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=200'].map((img, i) => (
-                                    <div key={i} className="aspect-square rounded-3xl bg-white/5 border border-white/10 overflow-hidden group cursor-pointer">
-                                         <img src={img} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-all group-hover:scale-110 duration-700" alt="" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 pt-10 border-t border-white/5">
-                            <h4 className="text-[10px] text-gray-700 font-black uppercase tracking-[0.3em] mb-4">Sanctuary Controls</h4>
-                            
-                            {[
-                                { icon: Bell, label: 'Mute Notifications', toggle: true },
-                                { icon: Shield, label: 'Encryption Details', sub: 'E2EE Active' },
-                            ].map((item, i) => (
-                                <button key={i} className="w-full flex items-center justify-between p-5 bg-white/5 rounded-[1.8rem] hover:bg-white/10 transition-all group border border-transparent hover:border-white/5">
-                                    <div className="flex items-center gap-4">
-                                        <item.icon size={18} className="text-gray-600 group-hover:text-pulse-violet transition-colors" />
-                                        <div className="text-left">
-                                            <p className="text-[11px] font-bold text-white uppercase tracking-wider">{item.label}</p>
-                                            {item.sub && <p className="text-[9px] text-gray-600 font-black uppercase tracking-widest mt-1">{item.sub}</p>}
-                                        </div>
-                                    </div>
-                                    {item.toggle && (
-                                        <div className="w-10 h-5 bg-pulse-violet/20 rounded-full relative border border-pulse-violet/30">
-                                            <div className="absolute right-1 top-1 w-3 h-3 bg-pulse-violet rounded-full shadow-[0_0_10px_#8B5CF6]" />
-                                        </div>
-                                    )}
-                                </button>
-                            ))}
-
-                            <button className="w-full flex items-center gap-4 p-5 bg-red-500/5 rounded-[1.8rem] hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/10 group mt-8">
-                                <Ban size={18} className="text-red-900 group-hover:text-red-500 transition-colors" />
-                                <span className="text-[11px] font-black text-red-900 group-hover:text-red-500 uppercase tracking-widest">Terminate Connection</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
