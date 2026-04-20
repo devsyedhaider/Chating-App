@@ -18,14 +18,13 @@ const Dashboard = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
+  const [isAddingFriend, setIsAddingFriend] = useState(false);
 
   const filters = ['All', 'Unread'];
 
   useEffect(() => {
     fetchFriends();
     fetchPendingRequests();
-
-    // Poll for new messages/unread counts every 10 seconds for better demo feel
     const interval = setInterval(fetchFriends, 10000);
     return () => clearInterval(interval);
   }, []);
@@ -76,6 +75,7 @@ const Dashboard = () => {
       alert('Friend request sent!');
       setSearchResults(null);
       setSearchId('');
+      setIsAddingFriend(false);
     } catch (error) {
       alert(error.response?.data?.message || 'Failed to send request');
     }
@@ -107,27 +107,75 @@ const Dashboard = () => {
         return (
           <div className="flex h-full overflow-hidden bg-[#020617]">
              <div className="w-[400px] border-r border-white/5 flex flex-col bg-[#020617] overflow-hidden">
+                {/* Dynamic Header */}
                 <div className="h-20 flex items-center justify-between px-6 bg-[#0B1120]/20 border-b border-white/5 relative overflow-hidden">
-                   <h1 className="text-xl font-black text-white tracking-tight uppercase">Messages</h1>
-                   <div className="flex items-center gap-4 text-gray-500">
-                      <Plus size={20} className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" />
-                      <MoreVertical size={20} className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" />
-                   </div>
+                   <AnimatePresence mode="wait">
+                      {!isAddingFriend ? (
+                        <motion.div 
+                            key="title"
+                            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                            className="flex-1 flex justify-between items-center"
+                        >
+                            <h1 className="text-xl font-black text-white tracking-tight uppercase">Messages</h1>
+                            <div className="flex items-center gap-4 text-gray-500">
+                                <Plus 
+                                    size={20} 
+                                    onClick={() => setIsAddingFriend(true)}
+                                    className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" 
+                                />
+                                <MoreVertical size={20} className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" />
+                            </div>
+                        </motion.div>
+                      ) : (
+                        <motion.div 
+                            key="search"
+                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+                            className="flex-1 flex items-center gap-3"
+                        >
+                            <div className="relative flex-1">
+                                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-pulse-violet" />
+                                <form onSubmit={handleSearch}>
+                                    <input 
+                                        autoFocus
+                                        type="text" 
+                                        placeholder="Enter Pulse ID..."
+                                        value={searchId}
+                                        onChange={(e) => setSearchId(e.target.value)}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-pulse-violet/50 transition-all"
+                                    />
+                                </form>
+                            </div>
+                            <X 
+                                size={20} 
+                                onClick={() => { setIsAddingFriend(false); setSearchResults(null); setSearchId(''); }}
+                                className="cursor-pointer text-gray-600 hover:text-white transition-colors" 
+                            />
+                        </motion.div>
+                      )}
+                   </AnimatePresence>
                 </div>
 
                 <div className="p-4 space-y-5">
-                   <div className="relative group">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-pulse-violet" size={16} />
-                      <form onSubmit={handleSearch}>
-                        <input 
-                            type="text" 
-                            placeholder="Find connections..."
-                            value={searchId}
-                            onChange={(e) => setSearchId(e.target.value)}
-                            className="pulse-input py-3 pl-12 pr-4 text-xs font-bold uppercase tracking-widest"
-                        />
-                      </form>
-                   </div>
+                   {/* Search Results Overlay inside List Area when adding friend */}
+                   <AnimatePresence>
+                        {searchResults && (
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-4">
+                                <div className="p-4 glass rounded-2xl flex items-center justify-between border-pulse-violet/20 shadow-2xl relative overflow-hidden bg-pulse-violet/5">
+                                    <div className="flex items-center gap-3 relative z-10 text-left">
+                                        <img src={searchResults.profile_image} className="w-10 h-10 rounded-xl object-cover border border-white/10" alt="" />
+                                        <div>
+                                            <p className="text-sm font-bold text-white">{searchResults.name}</p>
+                                            <p className="text-[9px] text-pulse-violet font-black uppercase tracking-widest">@{searchResults.user_id}</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => sendRequest(searchResults._id)} className="bg-pulse-indigo p-2 rounded-xl text-white hover:bg-pulse-violet transition-colors relative z-10 shadow-lg shadow-pulse-indigo/20">
+                                        <Plus size={18} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
                    <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
                       {filters.map(f => (
                          <button 
@@ -147,7 +195,6 @@ const Dashboard = () => {
                          key={friend._id}
                          onClick={() => {
                             setSelectedFriend(friend);
-                            // Optimistically clear unread count in UI
                             setFriends(prev => prev.map(f => f._id === friend._id ? { ...f, unreadCount: 0 } : f));
                          }}
                          className={`w-full px-6 py-4 flex items-center gap-4 transition-all relative border-b border-white/5 ${selectedFriend?._id === friend._id ? 'bg-pulse-violet/5' : 'hover:bg-white/5'}`}
