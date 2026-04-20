@@ -21,10 +21,11 @@ const Sidebar = ({ activeTab, onTabChange }) => {
             <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#020617]" />
         </div>
         <div>
-          <h2 className="font-bold text-white text-sm">{user.name}</h2>
-          <div className="flex items-center gap-2">
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">Active Now</p>
-            <span className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded-md text-gray-400 font-mono border border-white/5">#{user.user_id}</span>
+          <h2 className="font-bold text-white text-sm tracking-tight">{user.name}</h2>
+          <span className="text-[10px] text-gray-500 font-mono tracking-tighter block opacity-60 mt-0.5">#{user.user_id}</span>
+          <div className="flex items-center gap-1.5 mt-2">
+            <div className="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]" />
+            <p className="text-[9px] text-gray-500 uppercase tracking-widest font-black">Active Now</p>
           </div>
         </div>
       </div>
