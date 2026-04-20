@@ -6,7 +6,7 @@ import People from './People';
 import Settings from './Settings';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Plus, MoreVertical, Archive, Check, X, FileText, UserPlus } from 'lucide-react';
+import { Search, Plus, MoreVertical, Archive, Check, X, FileText, UserPlus, Sparkles, MessageSquare } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -97,29 +97,30 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="flex h-full overflow-hidden bg-[#111b21]">
+          <div className="flex h-full overflow-hidden bg-[#020617]">
              {/* Middle Column: Conversation List */}
-             <div className="w-[400px] border-r border-white/5 flex flex-col bg-[#111b21] overflow-hidden">
-                {/* Header */}
-                <div className="h-16 flex items-center justify-between px-4 bg-[#202c33]">
-                   <h1 className="text-xl font-bold text-[#e9edef]">WhatsApp</h1>
-                   <div className="flex items-center gap-4 text-[#aebac1]">
-                      <Plus size={22} className="cursor-pointer hover:bg-white/5 rounded-full p-0.5" />
-                      <MoreVertical size={22} className="cursor-pointer hover:bg-white/5 rounded-full p-0.5" />
+             <div className="w-[400px] border-r border-white/5 flex flex-col bg-[#020617] overflow-hidden">
+                {/* Pulse-WhatsApp Header */}
+                <div className="h-20 flex items-center justify-between px-6 bg-[#0B1120]/20 border-b border-white/5 relative overflow-hidden">
+                   <div className="absolute top-0 right-0 w-24 h-24 bg-pulse-violet/5 blur-[40px] -z-10" />
+                   <h1 className="text-xl font-black text-white tracking-tight uppercase">Messages</h1>
+                   <div className="flex items-center gap-4 text-gray-500">
+                      <Plus size={20} className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" />
+                      <MoreVertical size={20} className="cursor-pointer hover:text-pulse-violet transition-colors bg-white/5 p-1 rounded-lg" />
                    </div>
                 </div>
 
-                {/* Search & Filter Section */}
-                <div className="p-3 space-y-3">
+                {/* Pulse Search & Filter Section */}
+                <div className="p-4 space-y-5">
                    <div className="relative group">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8696a0] group-focus-within:text-[#00a884]" size={16} />
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-pulse-violet transition-colors" size={16} />
                       <form onSubmit={handleSearch}>
                         <input 
                             type="text" 
-                            placeholder="Search or start a new chat"
+                            placeholder="Find connections..."
                             value={searchId}
                             onChange={(e) => setSearchId(e.target.value)}
-                            className="w-full bg-[#202c33] border-none rounded-lg py-2.5 pl-12 pr-4 text-sm text-[#e9edef] focus:outline-none placeholder-[#8696a0]"
+                            className="pulse-input py-3 pl-12 pr-4 text-xs font-bold uppercase tracking-widest"
                         />
                       </form>
                    </div>
@@ -128,58 +129,53 @@ const Dashboard = () => {
                          <button 
                             key={f}
                             onClick={() => setActiveFilter(f)}
-                            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${activeFilter === f ? 'bg-[#005c4b] text-[#e9edef]' : 'bg-[#202c33] text-[#8696a0] hover:bg-white/5'}`}
+                            className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all border ${activeFilter === f ? 'bg-pulse-violet border-pulse-violet text-white shadow-[0_5px_15px_rgba(139,92,246,0.3)]' : 'bg-white/5 border-white/5 text-gray-500 hover:text-gray-300 hover:bg-white/10'}`}
                          >
                             {f}
                          </button>
                       ))}
-                      <button className="bg-[#202c33] p-1.5 rounded-full text-[#8696a0] hover:bg-white/5 flex-shrink-0">
-                         <Plus size={14} />
-                      </button>
                    </div>
                 </div>
 
                 {/* Search Results Overlay */}
                 <AnimatePresence>
                     {searchResults && (
-                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="px-3 pb-4">
-                            <div className="bg-[#202c33] rounded-lg p-3 flex items-center justify-between border border-white/5">
-                                <div className="flex items-center gap-3">
-                                    <img src={searchResults.profile_image} className="w-10 h-10 rounded-full object-cover" alt="" />
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="px-4 pb-4">
+                            <div className="p-4 glass rounded-2xl flex items-center justify-between border-pulse-violet/20 shadow-2xl relative overflow-hidden">
+                                <div className="absolute inset-0 bg-pulse-indigo/5 animate-pulse" />
+                                <div className="flex items-center gap-3 relative z-10 text-left">
+                                    <img src={searchResults.profile_image} className="w-10 h-10 rounded-xl object-cover border border-white/10" alt="" />
                                     <div>
-                                        <p className="text-sm font-medium text-white">{searchResults.name}</p>
-                                        <p className="text-[10px] text-[#8696a0]">@{searchResults.user_id}</p>
+                                        <p className="text-sm font-bold text-white">{searchResults.name}</p>
+                                        <p className="text-[9px] text-pulse-violet font-black uppercase tracking-widest">@{searchResults.user_id}</p>
                                     </div>
                                 </div>
-                                <button onClick={() => sendRequest(searchResults._id)} className="text-[#00a884] hover:bg-white/5 p-2 rounded-full">
-                                    <UserPlus size={18} />
+                                <button onClick={() => sendRequest(searchResults._id)} className="bg-pulse-indigo p-2 rounded-xl text-white hover:bg-pulse-violet transition-colors relative z-10 shadow-lg shadow-pulse-indigo/20">
+                                    <Check size={18} />
                                 </button>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                {/* Archived Row */}
-                <div className="px-4 py-3 flex items-center gap-4 text-[#e9edef] hover:bg-[#202c33] cursor-pointer transition-colors mt-1">
-                   <Archive size={18} className="text-[#00a884]" />
-                   <span className="text-sm font-medium">Archived</span>
-                </div>
-
-                {/* Pending Requests Section */}
+                {/* Pending Requests Mini-Feed */}
                 {pendingRequests.length > 0 && (
-                   <div className="px-4 pt-4">
-                      <p className="text-[10px] text-[#8696a0] font-bold uppercase tracking-widest mb-3">Pending Requests</p>
-                      <div className="space-y-1">
+                   <div className="px-4 mb-4">
+                      <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.3em] mb-4">Sanctuary Alerts</p>
+                      <div className="space-y-3">
                          {pendingRequests.map(req => (
-                            <div key={req._id} className="flex items-center gap-3 p-3 bg-[#202c33]/50 rounded-lg group">
-                               <img src={req.sender_id.profile_image} className="w-10 h-10 rounded-full object-cover" alt="" />
-                               <div className="flex-1">
-                                  <p className="text-xs font-bold text-white mb-0.5">{req.sender_id.name}</p>
-                                  <p className="text-[9px] text-[#8696a0]">New Connect Request</p>
-                               </div>
-                               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button onClick={() => acceptRequest(req._id)} className="p-1.5 text-[#00a884] hover:bg-white/5 rounded-full"><Check size={16}/></button>
-                                  <button className="p-1.5 text-red-500 hover:bg-white/5 rounded-full"><X size={16}/></button>
+                            <div key={req._id} className="p-4 bg-white/5 border border-white/5 rounded-2xl group relative overflow-hidden">
+                               <div className="absolute inset-y-0 left-0 w-1 bg-pulse-indigo" />
+                               <div className="flex items-center gap-3">
+                                  <img src={req.sender_id.profile_image} className="w-10 h-10 rounded-xl object-cover" alt="" />
+                                  <div className="flex-1 text-left">
+                                     <p className="text-xs font-bold text-white mb-0.5">{req.sender_id.name}</p>
+                                     <p className="text-[8px] text-gray-700 font-black uppercase tracking-widest">Incoming Request</p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                     <button onClick={() => acceptRequest(req._id)} className="p-2 bg-pulse-indigo/10 text-pulse-indigo hover:bg-pulse-indigo hover:text-white rounded-lg transition-all"><Check size={14}/></button>
+                                     <button className="p-2 bg-white/5 text-gray-600 hover:text-white rounded-lg transition-all"><X size={14}/></button>
+                                  </div>
                                </div>
                             </div>
                          ))}
@@ -187,56 +183,58 @@ const Dashboard = () => {
                    </div>
                 )}
 
-                {/* Conversation Scroll Area */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar mt-2">
+                {/* Conversation List */}
+                <div className="flex-1 overflow-y-auto custom-scrollbar pt-2">
+                   <div className="px-4 mb-4"><span className="text-[9px] text-gray-700 font-black uppercase tracking-[0.3em]">Direct Messages</span></div>
                    {friends.map(friend => (
                       <button
                          key={friend._id}
                          onClick={() => setSelectedFriend(friend)}
-                         className={`w-full px-4 py-3 flex items-center gap-4 transition-all border-b border-white/5 hover:bg-[#202c33] ${selectedFriend?._id === friend._id ? 'bg-[#202c33]' : ''}`}
+                         className={`w-full px-6 py-4 flex items-center gap-4 transition-all relative border-b border-white/5 ${selectedFriend?._id === friend._id ? 'bg-pulse-violet/5 group' : 'hover:bg-white/5'}`}
                       >
-                         <img src={friend.profile_image} className="w-12 h-12 rounded-full object-cover" alt="" />
-                         <div className="flex-1 text-left">
-                            <div className="flex justify-between items-center mb-0.5">
-                               <h4 className="text-sm font-medium text-[#e9edef] truncate max-w-[180px]">{friend.name}</h4>
-                               <span className="text-[10px] text-[#8696a0]">1:20 pm</span>
+                         {selectedFriend?._id === friend._id && <div className="absolute inset-y-0 left-0 w-1 bg-pulse-violet" />}
+                         <div className="relative">
+                            <img src={friend.profile_image} className="w-12 h-12 rounded-[18px] object-cover border border-white/10" alt="" />
+                            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-4 border-[#020617]" />
+                         </div>
+                         <div className="flex-1 text-left min-w-0">
+                            <div className="flex justify-between items-center mb-1">
+                               <h4 className={`text-sm font-bold tracking-tight truncate ${selectedFriend?._id === friend._id ? 'text-pulse-violet' : 'text-white'}`}>{friend.name}</h4>
+                               <span className="text-[9px] text-gray-600 font-black tracking-widest">1:20 PM</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                               <p className="text-xs text-[#8696a0] line-clamp-1">Last seen recently at sanctuary...</p>
-                            </div>
+                            <p className="text-xs text-gray-500 truncate leading-relaxed">Encrypted data stream active...</p>
                          </div>
                       </button>
                    ))}
                 </div>
              </div>
 
-             {/* Right Column: Chat Window or WhatsApp Landing */}
-             <main className="flex-1 overflow-hidden relative bg-[#222e35]">
+             {/* Right Column: Chat Sanctuary or Landing Experience */}
+             <main className="flex-1 overflow-hidden relative bg-[#0B1120]/10">
                 <AnimatePresence mode="wait">
                   {selectedFriend ? (
-                    <motion.div key="chat" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full">
+                    <motion.div key="chat" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="h-full">
                         <ChatWindow friend={selectedFriend} />
                     </motion.div>
                   ) : (
-                    <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col items-center justify-center p-12 text-center">
-                        <div className="flex gap-4 mb-8">
-                           <div className="w-20 h-20 bg-[#2b3943] rounded-2xl flex flex-col items-center justify-center gap-2 border border-white/5 cursor-pointer hover:bg-[#374751] transition-all">
-                              <FileText size={24} className="#8696a0" />
-                              <span className="text-[10px] text-[#8696a0] font-medium">Send document</span>
-                           </div>
-                           <div className="w-20 h-20 bg-[#2b3943] rounded-2xl flex flex-col items-center justify-center gap-2 border border-white/5 cursor-pointer hover:bg-[#374751] transition-all">
-                              <UserPlus size={24} className="#8696a0" />
-                              <span className="text-[10px] text-[#8696a0] font-medium">Add contact</span>
-                           </div>
+                    <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col items-center justify-center p-12 text-center relative">
+                        {/* Landing Content */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-pulse-indigo/5 blur-[120px] rounded-full" />
                         </div>
-                        <h1 className="text-2xl font-light text-[#e9edef] opacity-80">WhatsApp for Windows</h1>
-                        <p className="text-xs text-[#8696a0] mt-3 max-w-sm leading-relaxed">
-                           Send and receive messages without keeping your phone online.<br/>
-                           Pulse end-to-end encrypted sanctuary protection.
+
+                        <div className="w-64 h-64 bg-[#0B1120] rounded-[4rem] border border-white/5 flex items-center justify-center mb-12 relative overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                            <div className="absolute inset-0 bg-gradient-to-br from-pulse-indigo/10 to-pulse-violet/10 animate-glow" />
+                            <Sparkles className="text-pulse-violet relative z-10" size={64} fill="currentColor" />
+                        </div>
+                        <h1 className="text-5xl font-black text-white mb-6 uppercase tracking-tight">Your sanctuary <br/> awaits.</h1>
+                        <p className="text-gray-500 text-lg mb-12 max-w-sm font-medium leading-relaxed">
+                           Connect to the pulse of your network. Securely, privately, flawlessly.
                         </p>
-                        <div className="absolute bottom-10 text-[10px] text-[#8696a0] flex items-center gap-2 opacity-60 font-medium">
-                           <div className="w-3 h-3 border-2 border-[#8696a0] rounded-sm opacity-50" />
-                           Your personal messages are end-to-end encrypted
+                        
+                        <div className="flex items-center gap-3 text-[10px] text-gray-700 font-black uppercase tracking-[0.4em] bg-white/5 px-6 py-3 rounded-2xl border border-white/5">
+                            <div className="w-2 h-2 bg-pulse-violet rounded-full animate-pulse shadow-[0_0_8px_#8B5CF6]" />
+                            System Active & Encrypted
                         </div>
                     </motion.div>
                   )}
@@ -248,7 +246,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#111b21] overflow-hidden font-sans select-none">
+    <div className="flex h-screen bg-[#020617] overflow-hidden font-sans select-none antialiased">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 overflow-hidden">
         {renderRightColumn()}
