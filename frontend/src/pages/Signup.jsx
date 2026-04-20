@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, UserPlus, Image as ImageIcon } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Camera, UserPlus } from 'lucide-react';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    profile_image: ''
   });
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
@@ -33,7 +32,6 @@ const Signup = () => {
     e.preventDefault();
     setError('');
     
-    // Use FormData for file upload
     const data = new FormData();
     data.append('name', formData.name);
     data.append('email', formData.email);
@@ -51,87 +49,90 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#020617] relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-pulse-indigo/5 blur-[150px] -z-10 animate-glow" />
+      <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-pulse-violet/5 blur-[150px] -z-10 animate-glow" />
+
+      <div className="mb-8 text-center">
+        <p className="text-pulse-violet text-sm font-bold tracking-[0.2em] mb-4 uppercase">Nocturnal</p>
+        <h1 className="text-6xl font-bold text-white mb-6 tracking-tight">Join the Sanctuary</h1>
+        <p className="text-gray-400 text-center max-w-md mx-auto text-lg leading-relaxed">
+            Experience the pulse of a premium digital sanctuary. Create your presence.
+        </p>
+      </div>
+
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md p-8 glass rounded-3xl"
+        className="w-full max-w-[480px] p-10 glass rounded-[3rem] border-white/5 relative bg-[#0B1120]/60 overflow-hidden"
       >
-        <div className="flex flex-col items-center mb-6">
-          <div className="p-4 mb-4 bg-violet-600 rounded-2xl shadow-xl shadow-violet-500/20">
-            <UserPlus size={32} className="text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-gray-400 text-center">Join our community and start chatting</p>
-        </div>
-
-        {error && (
-          <div className="p-3 mb-6 bg-red-500/10 border border-red-500/50 rounded-xl text-red-500 text-sm text-center">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Profile Image Upload */}
-          <div className="flex flex-col items-center mb-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Profile Identity Section */}
+          <div className="flex flex-col items-center mb-10 relative">
             <label className="relative cursor-pointer group">
-              <div className="w-24 h-24 rounded-full border-2 border-dashed border-violet-500/50 flex items-center justify-center overflow-hidden bg-dark-surface/50 transition-all group-hover:border-violet-500">
+              <div className="w-32 h-32 rounded-3xl border border-white/10 flex items-center justify-center overflow-hidden bg-[#020617] transition-all group-hover:border-pulse-violet/50 shadow-2xl relative">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="flex flex-col items-center text-gray-500">
-                    <ImageIcon size={24} />
-                    <span className="text-[10px] mt-1">Upload</span>
+                  <div className="flex flex-col items-center text-gray-700">
+                    <div className="w-16 h-16 rounded-full border-2 border-white/5 flex items-center justify-center mb-2">
+                        <Camera size={32} strokeWidth={1.5} />
+                    </div>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                    <UserPlus size={20} className="text-white" />
+                {/* Plus Button Overlay */}
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-pulse-violet rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.5)] border-2 border-[#0B1120]">
+                    <UserPlus size={18} className="text-white" />
                 </div>
               </div>
               <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
             </label>
-            <p className="text-[10px] text-gray-500 mt-2 uppercase tracking-widest font-bold">Set Profile Picture</p>
+            <p className="text-[10px] text-gray-500 mt-6 uppercase tracking-[0.4em] font-black">Profile Identity</p>
           </div>
 
+          {error && (
+            <div className="p-4 mb-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs text-center">
+              {error}
+            </div>
+          )}
+
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Full Name</label>
+            <div className="relative group">
               <input 
                 type="text" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full pl-11 pr-4 py-2.5 bg-dark-surface/50 border border-white/5 rounded-xl focus:border-indigo-500 outline-none transition-all text-white"
-                placeholder="John Doe"
+                className="pulse-input bg-[#020617]/50"
+                placeholder="Alex Sterling"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
               <input 
                 type="email" 
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="w-full pl-11 pr-4 py-2.5 bg-dark-surface/50 border border-white/5 rounded-xl focus:border-indigo-500 outline-none transition-all text-white"
-                placeholder="yours@example.com"
+                className="pulse-input bg-[#020617]/50"
+                placeholder="alex@sanctuary.com"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Secret Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
               <input 
                 type="password" 
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="w-full pl-11 pr-4 py-2.5 bg-dark-surface/50 border border-white/5 rounded-xl focus:border-indigo-500 outline-none transition-all text-white"
+                className="pulse-input bg-[#020617]/50"
                 placeholder="••••••••"
                 required
               />
@@ -140,19 +141,19 @@ const Signup = () => {
 
           <button 
                 type="submit"
-                className="w-full py-3 mt-4 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl shadow-lg shadow-violet-500/30 transition-all active:scale-95"
+                className="w-full py-4 mt-8 bg-pulse-indigo hover:bg-pulse-violet text-white font-bold rounded-2xl shadow-[0_10px_25px_rgba(99,102,241,0.2)] transition-all active:scale-95 flex items-center justify-center gap-3"
           >
-            Create Account
+            Create Account <ArrowRight size={22} />
           </button>
         </form>
-
-        <p className="mt-6 text-center text-gray-400 text-sm">
-          Already have an account? {' '}
-          <Link to="/login" className="text-violet-400 hover:text-violet-300 font-semibold underline underline-offset-4">
-            Sign In
-          </Link>
-        </p>
       </motion.div>
+
+      <p className="mt-12 text-center text-gray-500 text-sm">
+        Already have an account? {' '}
+        <Link to="/login" className="text-white hover:text-pulse-violet font-bold transition-all">
+          Login
+        </Link>
+      </p>
     </div>
   );
 };
