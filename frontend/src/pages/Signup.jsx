@@ -9,6 +9,7 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
+    user_id: '',
   });
   const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
@@ -36,6 +37,7 @@ const Signup = () => {
     data.append('name', formData.name);
     data.append('email', formData.email);
     data.append('password', formData.password);
+    data.append('user_id', formData.user_id);
     if (imageFile) {
         data.append('profile_image', imageFile);
     }
@@ -93,7 +95,7 @@ const Signup = () => {
           )}
 
           <div>
-            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
+            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2 text-left">Full Name</label>
             <input 
                 type="text" 
                 value={formData.name}
@@ -102,6 +104,21 @@ const Signup = () => {
                 placeholder="Alex Sterling"
                 required
               />
+          </div>
+
+          <div>
+            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2 text-left">Unique Pulse ID</label>
+            <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-mono text-sm group-focus-within:text-pulse-violet transition-colors">@</span>
+                <input 
+                    type="text" 
+                    value={formData.user_id}
+                    onChange={(e) => setFormData({...formData, user_id: e.target.value.toLowerCase().replace(/\s+/g, '_')})}
+                    className="w-full py-3 pl-9 pr-5 bg-[#020617]/50 border border-white/5 rounded-xl text-white text-sm outline-none transition-all focus:border-pulse-violet/30 font-mono"
+                    placeholder="alex_pulse"
+                    required
+                />
+            </div>
           </div>
 
           <div>

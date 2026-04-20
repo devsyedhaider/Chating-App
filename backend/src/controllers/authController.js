@@ -5,18 +5,23 @@ const generateToken = require('../config/generateToken');
 // @route   POST /api/auth/register
 // @access  Public
 exports.registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, user_id } = req.body;
     const profile_image = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : req.body.profile_image;
 
     try {
-        const userExists = await User.findOne({ email });
-
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+        if (!user_id) {
+            return res.status(400).json({ message: 'Unique ID is required' });
         }
 
-        // Generate a unique user_id
-        const user_id = `user_${Math.random().toString(36).substr(2, 9)}`;
+        const emailExists = await User.findOne({ email });
+        if (emailExists) {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+
+        const idExists = await User.findOne({ user_id });
+        if (idExists) {
+            return res.status(400).json({ message: 'Pulse ID is already taken. Try another!' });
+        }
 
         const user = await User.create({
             name,
