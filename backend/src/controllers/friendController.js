@@ -1,6 +1,8 @@
 const FriendRequest = require('../models/FriendRequest');
 const Friend = require('../models/Friend');
 const User = require('../models/User');
+const Message = require('../models/Message');
+const Chat = require('../models/Chat');
 
 // @desc    Send Friend Request
 // @route   POST /api/friends/request
@@ -116,7 +118,39 @@ exports.getFriendsList = async (req, res) => {
             return f.user1_id._id.toString() === req.user._id.toString() ? f.user2_id : f.user1_id;
         });
 
-        res.json(friendsList);
+        // Add unread counts
+        const friendsWithUnread = await Promise.all(friendsList.map(async (friend) => {
+            const chat = await Chat.findOne({
+                participants: { $all: [req.user._id, friend._id] }
+            });
+
+            let unreadCount = 0;
+            let lastMessage = null;
+
+            if (chat) {
+                unreadCount = await Message.countDocuments({
+                    chat_id: chat._id,
+                    sender_id: friend._id,
+                    isRead: false
+                });
+
+                lastMessage = await Message.findOne({ chat_id: chat._id })
+                    .sort({ timestamp: -1 });
+            }
+
+            return {
+                ...friend.toObject(),
+                unreadCount,
+                lastMessage: lastMessage ? {
+                    text: lastMessage.message_text,
+                    timestamp: lastMessage.timestamp,
+                    isRead: lastMessage.isRead,
+                    isMe: lastMessage.sender_id.toString() === req.user._id.toString()
+                } : null
+            };
+        }));
+
+        res.json(friendsWithUnread);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

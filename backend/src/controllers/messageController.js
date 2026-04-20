@@ -64,3 +64,21 @@ exports.getMessages = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// @desc    Mark messages in a chat as read
+// @route   POST /api/messages/read
+// @access  Private
+exports.markAsRead = async (req, res) => {
+    const { chat_id } = req.body;
+    const user_id = req.user._id;
+
+    try {
+        await Message.updateMany(
+            { chat_id, sender_id: { $ne: user_id }, isRead: false },
+            { $set: { isRead: true } }
+        );
+        res.json({ message: 'Messages marked as read' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
