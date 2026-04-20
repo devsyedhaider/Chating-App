@@ -11,14 +11,37 @@ const Signup = () => {
     password: '',
     profile_image: ''
   });
-  const [error, setError] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const res = await register(formData);
+    
+    // Use FormData for file upload
+    const data = new FormData();
+    data.append('name', formData.name);
+    data.append('email', formData.email);
+    data.append('password', formData.password);
+    if (imageFile) {
+        data.append('profile_image', imageFile);
+    }
+
+    const res = await register(data);
     if (res.success) {
       navigate('/');
     } else {
@@ -33,7 +56,7 @@ const Signup = () => {
         animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-md p-8 glass rounded-3xl"
       >
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-6">
           <div className="p-4 mb-4 bg-violet-600 rounded-2xl shadow-xl shadow-violet-500/20">
             <UserPlus size={32} className="text-white" />
           </div>
@@ -48,6 +71,27 @@ const Signup = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Profile Image Upload */}
+          <div className="flex flex-col items-center mb-4">
+            <label className="relative cursor-pointer group">
+              <div className="w-24 h-24 rounded-full border-2 border-dashed border-violet-500/50 flex items-center justify-center overflow-hidden bg-dark-surface/50 transition-all group-hover:border-violet-500">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center text-gray-500">
+                    <ImageIcon size={24} />
+                    <span className="text-[10px] mt-1">Upload</span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <UserPlus size={20} className="text-white" />
+                </div>
+              </div>
+              <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+            </label>
+            <p className="text-[10px] text-gray-500 mt-2 uppercase tracking-widest font-bold">Set Profile Picture</p>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
             <div className="relative">
@@ -89,20 +133,6 @@ const Signup = () => {
                 className="w-full pl-11 pr-4 py-2.5 bg-dark-surface/50 border border-white/5 rounded-xl focus:border-indigo-500 outline-none transition-all text-white"
                 placeholder="••••••••"
                 required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Profile Image URL (Optional)</label>
-            <div className="relative">
-              <ImageIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-              <input 
-                type="text" 
-                value={formData.profile_image}
-                onChange={(e) => setFormData({...formData, profile_image: e.target.value})}
-                className="w-full pl-11 pr-4 py-2.5 bg-dark-surface/50 border border-white/5 rounded-xl focus:border-indigo-500 outline-none transition-all text-white"
-                placeholder="https://image-url"
               />
             </div>
           </div>

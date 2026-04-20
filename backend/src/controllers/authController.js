@@ -5,7 +5,8 @@ const generateToken = require('../config/generateToken');
 // @route   POST /api/auth/register
 // @access  Public
 exports.registerUser = async (req, res) => {
-    const { name, email, password, profile_image } = req.body;
+    const { name, email, password } = req.body;
+    const profile_image = req.file ? `http://localhost:5000/uploads/${req.file.filename}` : req.body.profile_image;
 
     try {
         const userExists = await User.findOne({ email });

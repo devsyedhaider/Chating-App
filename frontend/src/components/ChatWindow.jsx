@@ -85,7 +85,11 @@ const ChatWindow = ({ friend }) => {
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
       
-      socket.emit('send_message', data);
+      socket.emit('send_message', { 
+        ...data, 
+        sender_name: user.name, 
+        sender_image: user.profile_image 
+      });
       setNewMessage('');
     } catch (error) {
       console.error(error);
@@ -122,7 +126,11 @@ const ChatWindow = ({ friend }) => {
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
       
-      socket.emit('send_message', sentMsg);
+      socket.emit('send_message', { 
+        ...sentMsg, 
+        sender_name: user.name, 
+        sender_image: user.profile_image 
+      });
     } catch (error) {
       console.error(error);
       alert('Failed to upload image');
