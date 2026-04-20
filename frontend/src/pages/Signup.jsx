@@ -11,6 +11,7 @@ const Signup = () => {
     password: '',
     profile_image: ''
   });
+  const [error, setError] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const { register } = useAuth();
