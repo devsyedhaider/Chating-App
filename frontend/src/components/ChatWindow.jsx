@@ -149,12 +149,9 @@ const ChatWindow = ({ friend }) => {
                     <p className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em] italic">Active Now</p>
                 </div>
             </div>
-            <div className="flex items-center gap-2">
-                <button className="p-3 text-gray-600 hover:text-white transition-colors bg-white/5 rounded-2xl"><Video size={20} /></button>
-                <button className="p-3 text-gray-600 hover:text-white transition-colors bg-white/5 rounded-2xl"><Phone size={18} /></button>
-                <button className={`p-3 transition-all rounded-2xl ${showInfo ? 'bg-pulse-violet/10 text-pulse-violet shadow-lg' : 'bg-white/5 text-gray-600 hover:text-white'}`} onClick={() => setShowInfo(!showInfo)}>
-                    <Info size={20} />
-                </button>
+            <div className="flex items-center gap-4">
+                <Search size={20} className="text-gray-600 cursor-pointer hover:text-pulse-violet transition-colors" />
+                <MoreVertical size={20} className="text-gray-600 cursor-pointer hover:text-pulse-violet transition-colors" />
             </div>
         </div>
 
