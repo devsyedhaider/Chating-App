@@ -49,109 +49,98 @@ const Signup = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#020617] relative">
+    <div className="flex flex-col items-center justify-center h-screen w-full p-4 bg-[#020617] relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-pulse-indigo/5 blur-[150px] -z-10 animate-glow" />
-      <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-pulse-violet/5 blur-[150px] -z-10 animate-glow" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pulse-indigo/5 blur-[120px] -z-10" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-pulse-violet/5 blur-[120px] -z-10" />
 
-      <div className="mb-8 text-center">
-        <p className="text-pulse-violet text-sm font-bold tracking-[0.2em] mb-4 uppercase">Nocturnal</p>
-        <h1 className="text-6xl font-bold text-white mb-6 tracking-tight">Join the Sanctuary</h1>
-        <p className="text-gray-400 text-center max-w-md mx-auto text-lg leading-relaxed">
-            Experience the pulse of a premium digital sanctuary. Create your presence.
-        </p>
+      <div className="mb-6 text-center">
+        <p className="text-pulse-violet text-[10px] font-bold tracking-[0.4em] mb-2 uppercase italic">Nocturnal</p>
+        <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Join Sanctuary</h1>
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-[480px] p-10 glass rounded-[3rem] border-white/5 relative bg-[#0B1120]/60 overflow-hidden"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-[420px] p-8 glass rounded-[2.5rem] border-white/5 relative bg-[#0B1120]/60"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Profile Identity Section */}
-          <div className="flex flex-col items-center mb-10 relative">
+          <div className="flex flex-col items-center mb-6 relative">
             <label className="relative cursor-pointer group">
-              <div className="w-32 h-32 rounded-3xl border border-white/10 flex items-center justify-center overflow-hidden bg-[#020617] transition-all group-hover:border-pulse-violet/50 shadow-2xl relative">
+              <div className="w-24 h-24 rounded-[2rem] border border-white/10 flex items-center justify-center overflow-hidden bg-[#020617] transition-all group-hover:border-pulse-violet/50 shadow-2xl relative">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center text-gray-700">
-                    <div className="w-16 h-16 rounded-full border-2 border-white/5 flex items-center justify-center mb-2">
-                        <Camera size={32} strokeWidth={1.5} />
-                    </div>
+                    <Camera size={24} strokeWidth={1.5} />
                   </div>
                 )}
                 {/* Plus Button Overlay */}
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-pulse-violet rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.5)] border-2 border-[#0B1120]">
-                    <UserPlus size={18} className="text-white" />
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-pulse-violet rounded-xl flex items-center justify-center shadow-lg border-2 border-[#0B1120]">
+                    <UserPlus size={14} className="text-white" />
                 </div>
               </div>
               <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
             </label>
-            <p className="text-[10px] text-gray-500 mt-6 uppercase tracking-[0.4em] font-black">Profile Identity</p>
+            <p className="text-[9px] text-gray-600 mt-4 uppercase tracking-[0.4em] font-black">Identity</p>
           </div>
 
           {error && (
-            <div className="p-4 mb-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs text-center">
+            <div className="p-3 mb-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-[10px] text-center font-bold">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Full Name</label>
-            <div className="relative group">
-              <input 
+            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Full Name</label>
+            <input 
                 type="text" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="pulse-input bg-[#020617]/50"
+                className="w-full py-3 px-5 bg-[#020617]/50 border border-white/5 rounded-xl text-white text-sm outline-none transition-all focus:border-pulse-violet/30"
                 placeholder="Alex Sterling"
                 required
               />
-            </div>
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Email Address</label>
-            <div className="relative">
-              <input 
+            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Email Address</label>
+            <input 
                 type="email" 
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
-                className="pulse-input bg-[#020617]/50"
-                placeholder="alex@sanctuary.com"
+                className="w-full py-3 px-5 bg-[#020617]/50 border border-white/5 rounded-xl text-white text-sm outline-none transition-all focus:border-pulse-violet/30"
+                placeholder="alex@pulse.io"
                 required
               />
-            </div>
           </div>
 
           <div>
-            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Secret Password</label>
-            <div className="relative">
-              <input 
+            <label className="block text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-2">Secret Password</label>
+            <input 
                 type="password" 
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
-                className="pulse-input bg-[#020617]/50"
+                className="w-full py-3 px-5 bg-[#020617]/50 border border-white/5 rounded-xl text-white text-sm outline-none transition-all focus:border-pulse-violet/30"
                 placeholder="••••••••"
                 required
               />
-            </div>
           </div>
 
           <button 
                 type="submit"
-                className="w-full py-4 mt-8 bg-pulse-indigo hover:bg-pulse-violet text-white font-bold rounded-2xl shadow-[0_10px_25px_rgba(99,102,241,0.2)] transition-all active:scale-95 flex items-center justify-center gap-3"
+                className="w-full py-3.5 mt-4 bg-pulse-indigo hover:bg-pulse-violet text-white text-xs font-black uppercase tracking-[0.2em] rounded-xl shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3"
           >
-            Create Account <ArrowRight size={22} />
+            Create <ArrowRight size={18} />
           </button>
         </form>
       </motion.div>
 
-      <p className="mt-12 text-center text-gray-500 text-sm">
-        Already have an account? {' '}
-        <Link to="/login" className="text-white hover:text-pulse-violet font-bold transition-all">
-          Login
+      <p className="mt-8 text-center text-gray-600 text-[10px] font-bold uppercase tracking-widest">
+        Active resident? {' '}
+        <Link to="/login" className="text-white hover:text-pulse-violet transition-colors">
+          Login here
         </Link>
       </p>
     </div>

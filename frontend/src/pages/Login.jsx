@@ -98,19 +98,6 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="relative mt-8 mb-8 flex items-center justify-center">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-            <span className="relative px-4 bg-[#0B1120] text-[10px] font-bold text-gray-600 uppercase tracking-widest">Or Secure Connect</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center py-3 bg-[#020617]/50 border border-white/5 rounded-2xl hover:bg-white/5 transition-colors">
-                <div className="w-5 h-5 bg-gray-800 rounded-sm"></div>
-            </button>
-            <button className="flex items-center justify-center py-3 bg-[#020617]/50 border border-white/5 rounded-2xl hover:bg-white/5 transition-colors">
-                <div className="w-5 h-5 bg-gray-800 rounded-sm"></div>
-            </button>
-        </div>
       </motion.div>
 
       <p className="mt-12 text-center text-gray-500 text-xs">

@@ -10,6 +10,53 @@
 
 @layer base {
   body {
-.chat-bubble-receiver {
-  @apply bg-[#1E293B] text-gray-100 rounded-2xl rounded-tl-none py-2 px-4 shadow-lg border border-white/5;
+    @apply bg-dark-bg text-gray-100 font-sans;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-[#0B1120]/40 backdrop-blur-xl border border-white/5;
+  }
+
+  .pulse-input {
+    @apply w-full py-4 px-6 bg-[#0B1120]/60 border border-white/5 rounded-2xl text-white outline-none transition-all focus:border-pulse-violet/50 focus:bg-[#0B1120]/80;
+  }
+
+  .pulse-button {
+    @apply px-8 py-4 bg-pulse-indigo hover:bg-pulse-violet text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_10px_35px_rgba(139,92,246,0.3)] transition-all active:scale-95;
+  }
+
+  .sidebar-item-active {
+    @apply bg-pulse-violet/10 border-r-4 border-pulse-violet text-pulse-violet font-black;
+  }
+
+  .chat-bubble-sender {
+    @apply bg-gradient-to-br from-pulse-indigo to-pulse-violet text-white rounded-[1.8rem] rounded-tr-none px-6 py-4 shadow-2xl;
+  }
+
+  .chat-bubble-receiver {
+    @apply bg-[#0B1120] border border-white/5 text-gray-200 rounded-[1.8rem] rounded-tl-none px-6 py-4 shadow-xl;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/5 rounded-full hover:bg-white/10 transition-colors;
+  }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+.animate-glow {
+  animation: glow 8s ease-in-out infinite;
 }
