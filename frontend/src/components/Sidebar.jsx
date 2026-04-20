@@ -22,7 +22,10 @@ const Sidebar = ({ activeTab, onTabChange }) => {
         </div>
         <div>
           <h2 className="font-bold text-white text-sm">{user.name}</h2>
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">Active Now</p>
+          <div className="flex items-center gap-2">
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">Active Now</p>
+            <span className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded-md text-gray-400 font-mono border border-white/5">#{user.user_id}</span>
+          </div>
         </div>
       </div>
 
