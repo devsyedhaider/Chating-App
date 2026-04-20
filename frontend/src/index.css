@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #6366f1;
+  --color-secondary: #8b5cf6;
+  --color-dark: #0f172a;
+  --color-dark-surface: #1e293b;
+}
+
+@layer base {
+  body {
+    @apply bg-[#0F172A] text-gray-100;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chat-bubble-sender {
+  @apply bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-2xl rounded-tr-none py-2 px-4 shadow-lg;
+}
+
+.chat-bubble-receiver {
+  @apply bg-[#1E293B] text-gray-100 rounded-2xl rounded-tl-none py-2 px-4 shadow-lg border border-white/5;
+}
