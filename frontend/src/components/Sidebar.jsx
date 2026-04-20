@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { MessageSquare, Users, UserPlus, Settings, LogOut, Bell } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Sidebar = ({ activeTab, onTabChange }) => {
   const { user, logout } = useAuth();
@@ -8,59 +9,65 @@ const Sidebar = ({ activeTab, onTabChange }) => {
   const navItems = [
     { id: 'chats', icon: MessageSquare, label: 'Messages' },
     { id: 'people', icon: Users, label: 'People' },
-    { id: 'requests', icon: Bell, label: 'Requests', badge: true },
+    { id: 'requests', icon: Bell, label: 'Requests' },
     { id: 'settings', icon: Settings, label: 'Settings' },
   ];
 
   return (
-    <div className="flex flex-col h-full w-[260px] bg-[#020617] border-r border-white/5 py-8 px-4">
-      {/* Profile Section */}
-      <div className="flex items-center gap-4 px-2 mb-12">
-        <div className="relative">
-            <img src={user.profile_image} className="w-12 h-12 rounded-2xl object-cover border border-white/10" alt="" />
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#020617]" />
+    <div className="flex flex-col h-full w-[160px] bg-[#020617] border-r border-white/5 py-12 relative overflow-hidden">
+      {/* Profile Identity */}
+      <div className="flex flex-col items-center mb-16 px-4">
+        <div className="relative group cursor-pointer mb-4">
+            <div className="absolute inset-0 bg-pulse-violet/20 blur-[15px] opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl" />
+            <img src={user.profile_image} className="w-14 h-14 rounded-2xl object-cover border-2 border-white/10 relative z-10" alt="" />
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-4 border-[#020617] z-20" />
         </div>
-        <div>
-          <h2 className="font-bold text-white text-sm tracking-tight">{user.name}</h2>
-          <p className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-black mt-1 opacity-70 italic">{user.user_id}</p>
-        </div>
+        <h2 className="font-black text-white text-[10px] tracking-[0.2em] uppercase truncate w-full text-center">{user.name}</h2>
+        <span className="text-[8px] text-gray-700 font-black uppercase tracking-[0.3em] mt-1 italic">@{user.user_id}</span>
       </div>
 
-      {/* Nav Items */}
-      <div className="flex-1 space-y-2">
+      {/* Navigation Rails */}
+      <nav className="flex-1 px-4 space-y-4">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => onTabChange(item.id)}
-            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group ${activeTab === item.id ? 'sidebar-item-active text-white' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'}`}
+            className={`w-full group relative flex flex-col items-center justify-center py-6 rounded-[2.5rem] transition-all duration-500 overflow-hidden ${
+              activeTab === item.id 
+                ? 'bg-pulse-violet/10 text-pulse-violet shadow-[inset_0_0_20px_rgba(139,92,246,0.1)] border border-pulse-violet/20' 
+                : 'text-gray-700 hover:text-gray-400 hover:bg-white/5 border border-transparent'
+            }`}
           >
-            <item.icon size={20} />
-            <span className="text-sm font-bold tracking-wide">{item.label}</span>
-            {item.badge && (
-                <span className="ml-auto bg-pulse-violet text-[10px] text-white font-black px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(139,92,246,0.3)]">
-                    2
-                </span>
+            {activeTab === item.id && (
+                <motion.div 
+                    layoutId="sidebar-active"
+                    className="absolute inset-0 bg-gradient-to-br from-pulse-violet/10 to-transparent"
+                />
             )}
+            <item.icon size={22} className={`relative z-10 transition-transform duration-500 ${activeTab === item.id ? 'scale-110 drop-shadow-[0_0_10px_#8B5CF6]' : 'group-hover:scale-110'}`} />
+            <span className="text-[9px] font-black uppercase tracking-[0.3em] mt-3 relative z-10">{item.label}</span>
           </button>
         ))}
-      </div>
+      </nav>
 
-      {/* Footer Actions */}
-      <div className="space-y-4 pt-8 border-t border-white/5">
-        <button 
-            className="w-full pulse-button flex items-center justify-center gap-2 bg-gradient-to-r from-pulse-indigo to-pulse-violet shadow-2xl"
-        >
-            <UserPlus size={18} />
-            <span className="text-xs uppercase tracking-widest font-black">Add Friend</span>
-        </button>
+      {/* Broadcast Branding & Footer */}
+      <div className="px-6 py-12 flex flex-col items-center gap-10">
+          <div className="flex flex-col items-center opacity-20 group cursor-default">
+              <div className="flex gap-1 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-500 group-hover:bg-pulse-violet animate-pulse" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-500 group-hover:bg-pulse-violet group-hover:animate-pulse" style={{animationDelay: '0.2s'}} />
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-500 group-hover:bg-pulse-violet group-hover:animate-pulse" style={{animationDelay: '0.4s'}} />
+              </div>
+              <span className="text-[8px] font-black uppercase tracking-[0.8em] text-gray-500 ml-2">Pulse OS</span>
+          </div>
 
-        <button 
+          <button 
             onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-gray-300 transition-colors"
-        >
-            <LogOut size={18} />
-            <span className="text-sm font-bold">Log out</span>
-        </button>
+            className="flex items-center gap-3 py-4 px-6 bg-white/5 hover:bg-red-500/10 border border-white/5 hover:border-red-500/20 rounded-3xl group transition-all"
+          >
+            <LogOut size={14} className="text-gray-700 group-hover:text-red-500 transition-colors" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-gray-700 group-hover:text-red-500 transition-colors">Terminate</span>
+          </button>
       </div>
     </div>
   );
