@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import ChatWindow from '../components/ChatWindow';
 import People from './People';
 import Settings from './Settings';
+import Requests from './Requests'; // New Import
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Plus, MoreVertical, Archive, Check, X, FileText, UserPlus, Sparkles, MessageSquare } from 'lucide-react';
@@ -25,7 +26,10 @@ const Dashboard = () => {
   useEffect(() => {
     fetchFriends();
     fetchPendingRequests();
-    const interval = setInterval(fetchFriends, 10000);
+    const interval = setInterval(() => {
+        fetchFriends();
+        fetchPendingRequests();
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -101,6 +105,8 @@ const Dashboard = () => {
     switch (activeTab) {
       case 'people':
         return <People friends={friends} onChat={(friend) => { setActiveTab('chats'); setSelectedFriend(friend); }} />;
+      case 'requests':
+        return <Requests pendingRequests={pendingRequests} onAccept={acceptRequest} onDecline={() => {}} />;
       case 'settings':
         return <Settings />;
       default:
@@ -156,12 +162,11 @@ const Dashboard = () => {
                 </div>
 
                 <div className="p-4 space-y-5">
-                   {/* Search Results Overlay inside List Area when adding friend */}
                    <AnimatePresence>
                         {searchResults && (
                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-4">
                                 <div className="p-4 glass rounded-2xl flex items-center justify-between border-pulse-violet/20 shadow-2xl relative overflow-hidden bg-pulse-violet/5">
-                                    <div className="flex items-center gap-3 relative z-10 text-left">
+                                    <div className="flex items-center gap-3 text-left">
                                         <img src={searchResults.profile_image} className="w-10 h-10 rounded-xl object-cover border border-white/10" alt="" />
                                         <div>
                                             <p className="text-sm font-bold text-white">{searchResults.name}</p>
@@ -251,7 +256,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen bg-[#020617] overflow-hidden font-sans select-none antialiased">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} pendingCount={pendingRequests.length} />
       <div className="flex-1 overflow-hidden">
         {renderRightColumn()}
       </div>

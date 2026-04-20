@@ -2,18 +2,17 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { MessageSquare, Users, Bell, Settings, LogOut, Heart, Sparkles } from 'lucide-react';
 
-const Sidebar = ({ activeTab, onTabChange }) => {
+const Sidebar = ({ activeTab, onTabChange, pendingCount = 0 }) => {
   const { user, logout } = useAuth();
 
   const navItems = [
     { id: 'chats', icon: MessageSquare, label: 'Messages' },
     { id: 'people', icon: Users, label: 'People' },
-    { id: 'requests', icon: Bell, label: 'Requests', badge: true },
+    { id: 'requests', icon: Bell, label: 'Requests', badge: pendingCount > 0 },
   ];
 
   return (
     <div className="flex flex-col h-full w-[72px] bg-[#020617] border-r border-white/5 py-8 items-center justify-between z-50 relative">
-      {/* Pulse Glow Behind Sidebar */}
       <div className="absolute inset-y-0 right-0 w-[1px] bg-gradient-to-b from-transparent via-pulse-violet/20 to-transparent shadow-[0_0_15px_rgba(139,92,246,0.3)]" />
 
       <div className="flex flex-col items-center gap-8 w-full relative z-10">
@@ -32,7 +31,9 @@ const Sidebar = ({ activeTab, onTabChange }) => {
             )}
             <item.icon size={22} className="relative z-10" />
             {item.badge && (
-                <div className="absolute top-2 right-2 w-2 h-2 bg-pulse-violet rounded-full shadow-[0_0_10px_#8B5CF6]" />
+                <div className="absolute top-2 right-2 flex items-center justify-center min-w-[14px] h-[14px] bg-pulse-violet rounded-full shadow-[0_0_10px_#8B5CF6] text-[8px] text-white font-black px-1 border border-[#020617] transform translate-x-1 -translate-y-1">
+                    {pendingCount}
+                </div>
             )}
             <span className="absolute left-20 bg-[#0B1120] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-2xl border border-white/10 translate-x-2 group-hover:translate-x-0">
                 {item.label}
