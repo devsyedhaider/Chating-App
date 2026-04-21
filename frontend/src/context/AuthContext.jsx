@@ -50,13 +50,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData) => {
+    try {
+      const { data } = await axios.put('http://localhost:5000/api/users/profile', profileData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      });
+      setUser(data);
+      localStorage.setItem('chat-user', JSON.stringify(data));
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        message: error.response?.data?.message || 'Profile update failed' 
+      };
+    }
+  };
   const logout = () => {
     setUser(null);
     localStorage.removeItem('chat-user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateProfile, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
