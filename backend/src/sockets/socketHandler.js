@@ -16,6 +16,16 @@ const socketHandler = (io) => {
             socket.to(data.chatId).emit('user_typing', { userId: data.userId });
         });
 
+        socket.on('mark_read', (data) => {
+            // data includes chat_id, user_id
+            socket.to(data.chat_id).emit('messages_read', data);
+        });
+        
+        socket.on('send_reaction', (data) => {
+            // data should include chat_id, message_id, user_id, emoji
+            io.to(data.chat_id).emit('receive_reaction', data);
+        });
+
         socket.on('disconnect', () => {
             console.log('User disconnected:', socket.id);
         });

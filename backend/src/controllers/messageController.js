@@ -29,7 +29,7 @@ exports.getOrCreateChat = async (req, res) => {
 // @route   POST /api/messages/send
 // @access  Private
 exports.sendMessage = async (req, res) => {
-    const { chat_id, message_text, image_url } = req.body;
+    const { chat_id, message_text, image_url, location } = req.body;
     const sender_id = req.user._id;
 
     try {
@@ -37,7 +37,8 @@ exports.sendMessage = async (req, res) => {
             chat_id,
             sender_id,
             message_text,
-            image_url
+            image_url,
+            location
         });
 
         const populatedMessage = await Message.findById(message._id).populate('sender_id', 'name profile_image');
@@ -78,6 +79,29 @@ exports.markAsRead = async (req, res) => {
             { $set: { isRead: true } }
         );
         res.json({ message: 'Messages marked as read' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+// @desc    Add reaction to message
+// @route   POST /api/messages/react
+// @access  Private
+exports.addReaction = async (req, res) => {
+    const { message_id, emoji } = req.body;
+    const user_id = req.user._id;
+
+    try {
+        const message = await Message.findById(message_id);
+        if (!message) return res.status(404).json({ message: 'Message not found' });
+
+        // Remove existing reaction from this user if any
+        message.reactions = message.reactions.filter(r => r.user_id.toString() !== user_id.toString());
+        
+        // Add new reaction
+        message.reactions.push({ user_id, emoji });
+        
+        await message.save();
+        res.json(message);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

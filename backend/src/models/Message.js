@@ -19,6 +19,23 @@ const messageSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    location: {
+        type: {
+            lat: Number,
+            lng: Number,
+            address: String
+        },
+        default: null
+    },
+    reactions: [
+        {
+            user_id: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            emoji: String
+        }
+    ],
     timestamp: {
         type: Date,
         default: Date.now
