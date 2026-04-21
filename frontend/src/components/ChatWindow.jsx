@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { useCall } from '../context/CallContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Smile, Paperclip, Phone, Video, Search, MoreVertical, Check, Info, Bell, Shield, Ban, ChevronRight, MessageSquare, ImageIcon, X, Trash2, CheckCheck, MapPin, Map, SmilePlus } from 'lucide-react';
 
@@ -9,6 +10,7 @@ const socket = io('http://localhost:5000');
 
 const ChatWindow = ({ friend, onMessageRead }) => {
   const { user } = useAuth();
+  const { initiateCall } = useCall();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [chatId, setChatId] = useState(null);
@@ -245,6 +247,23 @@ const ChatWindow = ({ friend, onMessageRead }) => {
             </AnimatePresence>
 
             <div className="flex items-center gap-4 relative">
+                <div className="flex items-center bg-white/5 rounded-2xl p-1 gap-1 border border-white/5">
+                    <button 
+                        onClick={() => initiateCall(friend, 'voice')}
+                        className="p-3 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all relative group"
+                    >
+                        <Phone size={20} />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-[#0B1120] text-[8px] font-black uppercase tracking-widest text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 z-50">Voice Call</span>
+                    </button>
+                    <button 
+                        onClick={() => initiateCall(friend, 'video')}
+                        className="p-3 rounded-xl text-gray-500 hover:text-white hover:bg-white/5 transition-all relative group"
+                    >
+                        <Video size={20} />
+                        <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 bg-[#0B1120] text-[8px] font-black uppercase tracking-widest text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-white/10 z-50">Video Call</span>
+                    </button>
+                </div>
+
                 <button onClick={() => setShowSearch(!showSearch)} className={`p-3 rounded-2xl transition-all ${showSearch ? 'bg-pulse-violet/10 text-pulse-violet' : 'text-gray-600 hover:text-white'}`}><Search size={20} /></button>
                 <div className="relative" ref={menuRef}>
                     <button onClick={() => setShowMenu(!showMenu)} className={`p-3 rounded-2xl transition-all ${showMenu ? 'bg-white/10 text-white' : 'text-gray-600 hover:text-white'}`}><MoreVertical size={20} /></button>

@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('All');
   const [isAddingFriend, setIsAddingFriend] = useState(false);
+  const [friendSearchQuery, setFriendSearchQuery] = useState('');
 
   const filters = ['All', 'Unread'];
 
@@ -97,9 +98,11 @@ const Dashboard = () => {
     }
   };
 
-  const filteredFriends = activeFilter === 'Unread' 
-    ? friends.filter(f => f.unreadCount > 0)
-    : friends;
+  const filteredFriends = friends.filter(f => {
+    const matchesFilter = activeFilter === 'Unread' ? f.unreadCount > 0 : true;
+    const matchesSearch = f.name.toLowerCase().includes(friendSearchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   const renderRightColumn = () => {
     switch (activeTab) {
@@ -162,7 +165,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="p-4 space-y-5">
-                   <AnimatePresence>
+                    <AnimatePresence>
                         {searchResults && (
                             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-4">
                                 <div className="p-4 glass rounded-2xl flex items-center justify-between border-pulse-violet/20 shadow-2xl relative overflow-hidden bg-pulse-violet/5">
@@ -180,6 +183,17 @@ const Dashboard = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                   <div className="relative mb-3">
+                        <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700" />
+                        <input 
+                            type="text" 
+                            placeholder="Find companion..."
+                            value={friendSearchQuery}
+                            onChange={(e) => setFriendSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-11 pr-4 text-[10px] font-black uppercase tracking-[0.2em] text-white outline-none focus:border-pulse-violet/20 transition-all placeholder:text-gray-700"
+                        />
+                   </div>
 
                    <div className="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar">
                       {filters.map(f => (

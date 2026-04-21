@@ -63,11 +63,14 @@ const NotificationHandler = () => {
   return null;
 };
 
+import { CallProvider } from './context/CallContext';
+
 function App() {
   return (
     <AuthProvider>
-      <NotificationHandler />
-      <Toaster />
+      <CallProvider>
+        <NotificationHandler />
+        <Toaster />
       <Router>
         <div className="min-h-screen bg-[#020617] text-gray-100">
           <Routes>
@@ -84,6 +87,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      </CallProvider>
     </AuthProvider>
   );
 }
