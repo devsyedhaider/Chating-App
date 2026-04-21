@@ -104,7 +104,7 @@ const Dashboard = () => {
     return matchesFilter && matchesSearch;
   });
 
-  const renderRightColumn = () => {
+  const renderRightColumn = (fullWidth = false) => {
     switch (activeTab) {
       case 'people':
         return <People friends={friends} onChat={(friend) => { setActiveTab('chats'); setSelectedFriend(friend); }} />;
@@ -114,10 +114,9 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="flex h-full overflow-hidden bg-[#020617]">
-             <div className="w-[400px] border-r border-white/5 flex flex-col bg-[#020617] overflow-hidden">
+             <div className={`${fullWidth ? 'w-full' : 'flex-1'} flex flex-col bg-[#020617] overflow-hidden`}>
                 {/* Dynamic Header */}
-                <div className="h-20 flex items-center justify-between px-6 bg-[#0B1120]/20 border-b border-white/5 relative overflow-hidden">
+                <div className="h-20 flex items-center justify-between px-6 bg-[#0B1120]/20 border-b border-white/5 relative overflow-hidden shrink-0">
                    <AnimatePresence mode="wait">
                       {!isAddingFriend ? (
                         <motion.div 
@@ -143,11 +142,11 @@ const Dashboard = () => {
                         >
                             <div className="relative flex-1">
                                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-pulse-violet" />
-                                <form onSubmit={handleSearch}>
+                                <form onSubmit={handleSearch} className="w-full">
                                     <input 
                                         autoFocus
                                         type="text" 
-                                        placeholder="Enter Pulse ID..."
+                                        placeholder="Pulse ID..."
                                         value={searchId}
                                         onChange={(e) => setSearchId(e.target.value)}
                                         className="w-full bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest text-white outline-none focus:border-pulse-violet/50 transition-all"
@@ -164,10 +163,10 @@ const Dashboard = () => {
                    </AnimatePresence>
                 </div>
 
-                <div className="p-4 space-y-5">
+                <div className="p-4 space-y-4 shrink-0">
                     <AnimatePresence>
                         {searchResults && (
-                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-4">
+                            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="pb-2">
                                 <div className="p-4 glass rounded-2xl flex items-center justify-between border-pulse-violet/20 shadow-2xl relative overflow-hidden bg-pulse-violet/5">
                                     <div className="flex items-center gap-3 text-left">
                                         <img src={searchResults.profile_image} className="w-10 h-10 rounded-xl object-cover border border-white/10" alt="" />
@@ -184,14 +183,14 @@ const Dashboard = () => {
                         )}
                     </AnimatePresence>
 
-                   <div className="relative mb-3">
+                   <div className="relative">
                         <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-700" />
                         <input 
                             type="text" 
                             placeholder="Find companion..."
                             value={friendSearchQuery}
                             onChange={(e) => setFriendSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-11 pr-4 text-[10px] font-black uppercase tracking-[0.2em] text-white outline-none focus:border-pulse-violet/20 transition-all placeholder:text-gray-700"
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-3 pl-11 pr-4 text-[10px] font-black uppercase tracking-[0.2em] text-white outline-none focus:border-pulse-violet/20 transition-all placeholder:text-gray-700"
                         />
                    </div>
 
@@ -242,37 +241,49 @@ const Dashboard = () => {
                    ))}
                 </div>
              </div>
-
-             <main className="flex-1 overflow-hidden relative bg-[#0B1120]/10">
-                <AnimatePresence mode="wait">
-                  {selectedFriend ? (
-                    <motion.div key="chat" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="h-full">
-                        <ChatWindow friend={selectedFriend} onMessageRead={() => fetchFriends()} />
-                    </motion.div>
-                  ) : (
-                    <div className="h-full flex flex-col items-center justify-center p-12 text-center relative">
-                        <div className="w-64 h-64 bg-[#0B1120] rounded-[4rem] border border-white/5 flex items-center justify-center mb-12 relative overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-                            <div className="absolute inset-0 bg-gradient-to-br from-pulse-indigo/10 to-pulse-violet/10 animate-glow" />
-                            <Sparkles className="text-pulse-violet relative z-10" size={64} fill="currentColor" />
-                        </div>
-                        <h1 className="text-5xl font-black text-white mb-6 uppercase tracking-tight">Your sanctuary <br/> awaits.</h1>
-                        <p className="text-gray-500 text-lg mb-12 max-w-sm font-medium leading-relaxed">
-                           Connect to the pulse of your network. Securely, privately, flawlessly.
-                        </p>
-                    </div>
-                  )}
-                </AnimatePresence>
-             </main>
-          </div>
         );
     }
   };
 
   return (
-    <div className="flex h-screen bg-[#020617] overflow-hidden font-sans select-none antialiased">
-      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} pendingCount={pendingRequests.length} />
-      <div className="flex-1 overflow-hidden">
-        {renderRightColumn()}
+    <div className="flex flex-col md:flex-row h-screen bg-[#020617] overflow-hidden font-sans select-none antialiased">
+      <Sidebar activeTab={activeTab} onTabChange={(tab) => { setActiveTab(tab); setSelectedFriend(null); }} pendingCount={pendingRequests.length} />
+      
+      <div className={`flex-1 flex overflow-hidden ${activeTab === 'chats' && selectedFriend ? 'md:flex' : ''}`}>
+        {/* List Column */}
+        <div className={`w-full md:w-[400px] border-r border-white/5 flex flex-col bg-[#020617] overflow-hidden ${selectedFriend && activeTab === 'chats' ? 'hidden md:flex' : 'flex'}`}>
+            {renderRightColumn()}
+        </div>
+
+        {/* Dynamic Main Content Column */}
+        <main className={`flex-1 overflow-hidden relative bg-[#0B1120]/10 ${!selectedFriend && activeTab === 'chats' ? 'hidden md:flex' : 'flex'} flex-col h-full`}>
+            <AnimatePresence mode="wait">
+                {selectedFriend ? (
+                <motion.div key="chat" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="h-full flex flex-col pb-20 md:pb-0">
+                    <ChatWindow 
+                        friend={selectedFriend} 
+                        onMessageRead={() => fetchFriends()} 
+                        onBack={() => setSelectedFriend(null)}
+                    />
+                </motion.div>
+                ) : activeTab !== 'chats' ? (
+                <div className="h-full flex flex-col pb-20 md:pb-0">
+                    {renderRightColumn(true)}
+                </div>
+                ) : (
+                <div className="h-full hidden md:flex flex-col items-center justify-center p-12 text-center relative">
+                    <div className="w-64 h-64 bg-[#0B1120] rounded-[4rem] border border-white/5 flex items-center justify-center mb-12 relative overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                        <div className="absolute inset-0 bg-gradient-to-br from-pulse-indigo/10 to-pulse-violet/10 animate-glow" />
+                        <Sparkles className="text-pulse-violet relative z-10" size={64} fill="currentColor" />
+                    </div>
+                    <h1 className="text-5xl font-black text-white mb-6 uppercase tracking-tight">Your sanctuary <br/> awaits.</h1>
+                    <p className="text-gray-500 text-lg mb-12 max-w-sm font-medium leading-relaxed">
+                        Connect to the pulse of your network. Securely, privately, flawlessly.
+                    </p>
+                </div>
+                )}
+            </AnimatePresence>
+        </main>
       </div>
     </div>
   );

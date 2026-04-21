@@ -4,13 +4,13 @@ import { User, MessageSquare, UserPlus, Search } from 'lucide-react';
 
 const People = ({ friends, onChat }) => {
   return (
-    <div className="h-full flex flex-col p-10 overflow-hidden">
-      <div className="flex items-center justify-between mb-10">
+    <div className="h-full flex flex-col p-6 md:p-10 overflow-hidden relative">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 md:mb-10">
         <div>
-          <h1 className="text-4xl font-black text-white mb-2 tracking-tight">People</h1>
-          <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px]">{friends.length} active connections in your network</p>
+          <h1 className="text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">People</h1>
+          <p className="text-gray-500 font-bold uppercase tracking-[0.2em] text-[10px]">{friends.length} connections</p>
         </div>
-        <div className="relative group w-64">
+        <div className="relative group w-full md:w-64">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 transition-colors group-focus-within:text-pulse-violet" size={18} />
           <input 
             type="text" 
@@ -55,8 +55,8 @@ const People = ({ friends, onChat }) => {
       </div>
 
       {/* Floating Add Button */}
-      <button className="absolute bottom-10 right-10 w-16 h-16 bg-pulse-indigo hover:bg-pulse-violet text-white rounded-3xl shadow-[0_15px_35px_rgba(139,92,246,0.3)] flex items-center justify-center transition-all active:scale-90 group">
-         <UserPlus size={28} className="group-hover:scale-110 transition-transform" />
+      <button className="absolute bottom-24 md:bottom-10 right-6 md:right-10 w-14 h-14 md:w-16 md:h-16 bg-pulse-indigo hover:bg-pulse-violet text-white rounded-2xl md:rounded-3xl shadow-[0_15px_35px_rgba(139,92,246,0.3)] flex items-center justify-center transition-all active:scale-90 group z-30">
+         <UserPlus size={24} className="md:size-[28px] group-hover:scale-110 transition-transform" />
       </button>
     </div>
   );

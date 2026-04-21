@@ -4,19 +4,19 @@ import { Check, X, Bell, UserPlus } from 'lucide-react';
 
 const Requests = ({ pendingRequests, onAccept, onDecline }) => {
   return (
-    <div className="h-full bg-[#020617] flex flex-col p-10 relative overflow-hidden">
+    <div className="h-full bg-[#020617] flex flex-col p-6 md:p-10 relative overflow-hidden">
         {/* Glow Effect */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pulse-violet/5 blur-[120px] rounded-full -z-10" />
 
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between gap-4 mb-8 md:mb-12">
             <div>
-                <h1 className="text-4xl font-black text-white uppercase tracking-tight mb-2">Connection Requests</h1>
-                <p className="text-gray-500 text-sm font-bold uppercase tracking-widest bg-white/5 inline-block px-4 py-1.5 rounded-full border border-white/5">
-                    {pendingRequests.length} Residents waiting to connect
+                <h1 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tight mb-2">Signals</h1>
+                <p className="text-gray-500 text-[9px] md:text-sm font-bold uppercase tracking-widest bg-white/5 inline-block px-3 md:px-4 py-1.5 rounded-full border border-white/5">
+                    {pendingRequests.length} Pending
                 </p>
             </div>
-            <div className="p-4 bg-pulse-violet/10 rounded-3xl border border-pulse-violet/20 shadow-[0_10px_40px_rgba(139,92,246,0.1)]">
-                <Bell size={28} className="text-pulse-violet" fill="currentColor" />
+            <div className="p-3 md:p-4 bg-pulse-violet/10 rounded-2xl md:rounded-3xl border border-pulse-violet/20 shadow-[0_10px_40px_rgba(139,92,246,0.1)] shrink-0">
+                <Bell size={24} className="text-pulse-violet md:size-[28px]" fill="currentColor" />
             </div>
         </div>
 

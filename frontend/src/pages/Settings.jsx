@@ -82,13 +82,13 @@ const Settings = () => {
   };
 
   return (
-    <div className="h-full flex flex-col p-10 overflow-hidden relative">
+    <div className="h-full flex flex-col p-6 md:p-10 overflow-hidden relative">
       {/* Bg Decor */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pulse-indigo/5 blur-[120px] -z-10" />
 
-      <div className="mb-12">
-        <h1 className="text-5xl font-black text-white mb-3 tracking-tight">Account Settings</h1>
-        <p className="text-gray-500 font-medium text-lg leading-relaxed">Manage your digital sanctuary and presence.</p>
+      <div className="mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-5xl font-black text-white mb-2 md:mb-3 tracking-tight">Settings</h1>
+        <p className="text-gray-500 font-medium text-sm md:text-lg leading-relaxed">Manage your digital sanctuary.</p>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 pb-32">
@@ -183,24 +183,24 @@ const Settings = () => {
       </div>
 
       {/* Footer Actions */}
-      <div className="absolute bottom-10 right-10 flex items-center gap-8 bg-[#020617]/80 backdrop-blur-md p-2 pl-8 rounded-3xl border border-white/5">
+      <div className="absolute bottom-24 md:bottom-10 right-6 md:right-10 flex flex-col md:flex-row items-center gap-4 md:gap-8 bg-[#020617]/80 backdrop-blur-md p-4 md:p-2 md:pl-8 rounded-3xl border border-white/5 z-40">
         <button 
             onClick={handleDiscard}
             className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-colors"
         >
-            Discard Changes
+            Discard
         </button>
         <button 
             onClick={handleSave}
             disabled={saving || uploading}
-            className="px-10 py-4 bg-pulse-indigo hover:bg-pulse-violet text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_10px_35px_rgba(139,92,246,0.4)] transition-all active:scale-95 text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+            className="w-full md:w-auto px-6 md:px-10 py-3 md:py-4 bg-pulse-indigo hover:bg-pulse-violet text-white font-black uppercase tracking-[0.1em] md:tracking-[0.2em] rounded-2xl shadow-[0_10px_35px_rgba(139,92,246,0.4)] transition-all active:scale-95 text-[10px] md:text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
             {saving ? (
                 <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="w-3 h-3 md:w-4 md:h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     Saving...
                 </>
-            ) : 'Save Sanctuary Changes'}
+            ) : 'Update Sanctuary'}
         </button>
       </div>
     </div>
