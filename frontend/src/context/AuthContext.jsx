@@ -34,11 +34,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       // Check if userData is FormData, if not, it stays a plain object
-      const { data } = await axios.post('http://localhost:5000/api/auth/register', userData, {
-        headers: {
-          'Content-Type': userData instanceof FormData ? 'multipart/form-data' : 'application/json'
-        }
-      });
+      const { data } = await axios.post('http://localhost:5000/api/auth/register', userData);
       setUser(data);
       localStorage.setItem('chat-user', JSON.stringify(data));
       return { success: true };
